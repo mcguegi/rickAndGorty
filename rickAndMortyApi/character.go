@@ -1,9 +1,6 @@
 package rickAndMortyApi
 
 import (
-	"encoding/json"
-	"fmt"
-	"net/http"
 	"time"
 )
 
@@ -34,18 +31,4 @@ type Character struct {
 
 type rickAndMortyCharacterResponse struct {
 	Results []Character `json:"results"`
-}
-
-func GetAllCharacters() ([]Character, error) {
-	res, err := http.Get(fmt.Sprintf("%s/character", baseUrl))
-	if err != nil {
-		return nil, err
-	}
-
-	defer res.Body.Close()
-
-	var response rickAndMortyCharacterResponse
-	err = json.NewDecoder(res.Body).Decode(&response)
-
-	return response.Results, err
 }

@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -12,7 +13,7 @@ func main() {
 	// Benchmarking of the request time
 	now := time.Now()
 
-	rosterFile, err := os.OpenFile("roasters.txt", os.O_RDWR|os.O_CREATE|os.O_CREATE|os.O_APPEND, 0666)
+	rosterFile, err := os.OpenFile("roasters.txt", os.O_RDWR|os.O_CREATE|os.O_CREATE, 0666)
 
 	if err != nil {
 		log.Fatalf("error opening the file roasters.txt: %v", err)
@@ -30,10 +31,38 @@ func main() {
 		log.Fatalf("error while getting all characters: %v", err)
 	}
 
-	for _,character := range results {
-		log.Println("------------------------------")
-		log.Printf("Name %s", character.Name)
-		log.Println("------------------------------")
+	var wg sync.WaitGroup
+
+	wg.Add(len(results))
+
+	resu := make(chan rickAndMortyApi.LocationData)
+	for _, character := range results {
+		go func(character rickAndMortyApi.Character) {
+			location, err := rickAndMortyApi.GetLocationData(character)
+			if err != nil {
+				log.Fatalf("error getting location data: %v", err)
+			}
+
+			resu <- location
+
+			wg.Done()
+		}(character)
 	}
+
+	go func() {
+		wg.Wait()
+		close(resu)
+	}()
+
+	display(resu)
 	log.Printf("took %v", time.Now().Sub(now).String())
+}
+
+func display(resu chan rickAndMortyApi.LocationData) {
+
+	for r := range resu {
+		log.Println("----------------------------------")
+		log.Printf("ID: %s\n", r.Name)
+		log.Println("----------------------------------")
+	}
 }
