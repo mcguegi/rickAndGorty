@@ -35,7 +35,7 @@ func main() {
 
 	wg.Add(len(results))
 
-	resu := make(chan rickAndMortyApi.LocationData)
+	resu := make(chan []rickAndMortyApi.LocationData)
 	for _, character := range results {
 		go func(character rickAndMortyApi.Character) {
 			location, err := rickAndMortyApi.GetLocationData(character)
@@ -58,11 +58,14 @@ func main() {
 	log.Printf("took %v", time.Now().Sub(now).String())
 }
 
-func display(resu chan rickAndMortyApi.LocationData) {
+func display(resu chan []rickAndMortyApi.LocationData) {
 
 	for r := range resu {
-		log.Println("----------------------------------")
-		log.Printf("ID: %s\n", r.Name)
-		log.Println("----------------------------------")
+		log.Println("----------------------------------------")
+		log.Printf("ID: %v", r[0].ID)
+		log.Printf("Name: %s", r[0].Name)
+		log.Printf("Dimension: %s", r[0].Dimension)
+		log.Println("----------------------------------------")
+
 	}
 }

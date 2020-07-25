@@ -13,5 +13,13 @@ type LocationData struct {
 }
 
 type rickAndMortyLocationResponse struct {
-	Results LocationData `json:"results"`
+	Info struct {
+		Count int `json:"count"`
+		Pages int `json:"pages"`
+		Next  interface {
+		} `json:"next"`
+		Prev interface {
+		} `json:"prev"`
+	} `json:"info"`
+	Results []LocationData `json:"results"`
 }
