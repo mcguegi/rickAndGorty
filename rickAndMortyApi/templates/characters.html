@@ -1,0 +1,23 @@
+{{define "content"}}
+    <h1 style="text-align: center; justify-content: center;display: flex">RICK AND MORTY CHARACTERS</h1>
+    <div class="container">
+        <div class="row">
+            {{ range . }}
+                <div class="col-md-4">
+                    <div class="row">
+                        <h3 style="display: flex; text-align: center; justify-content: center">{{ .Name }}</h3>
+                    </div>
+                    <div class="row">
+                        <img src="{{ .Image }}" alt="Character image">
+                    </div>
+                    <div class="row">
+                        <p>Gender: <span {{if eq .Gender "Female" }} style="color:deeppink" {{else}} style="color:blue" {{end}} >{{.Gender}}</span>
+                        <br>
+                        Species: <span {{if eq .Species "Alien" }} style="color:darkgreen" {{else}} style="color:rebeccapurple" {{end}} >{{.Species}}</span></p>
+                    </div>
+                </div>
+            {{end}}
+        </div>
+    </div>
+
+{{end}}
